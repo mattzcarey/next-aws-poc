@@ -2,33 +2,58 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies and run the development server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm i
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Check your Next app runs locally.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## SST
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+This app uses SST. SST is a framework built on top of CDK. It has a nice NextJSApp construct which makes it easy to deploy NextJS apps to AWS (Cloudfront and S3). It uses `open-next` under the hood. 
 
-## Learn More
+Update your serverless stack in `sst.config.ts`. Especially the config object. Mine probably wont work for you. Here I use a previously bootstraped by cdk stack. You can remove the cdk object if you don't have a cdk stack already in your account.
 
-To learn more about Next.js, take a look at the following resources:
+```typescript
+name: "next-sst-poc",
+region: "eu-west-2",
+cdk: {
+qualifier: "hnb659fad",
+fileAssetsBucketName: "cdk-hnb659fad-assets-469147938340-eu-west-2",
+}
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Make sure you have valid AWS credentials (I like Leapp to manage my AWS credentials)
+Then run the server:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```bash
+pnpm sst dev
+```
 
-## Deploy on Vercel
+SST may need to bootstrap your account.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Deploy to prod with:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```bash
+pnpm sst deploy --stage prod
+```
+
+## SSR
+
+SST lets you to use SSR natively in your normal frontend code using `getServerSideProps` (as Vercel does) eg:
+
+```typescript
+export async function getServerSideProps() {
+  const command = new PutObjectCommand({
+    ACL: "public-read",
+    Key: crypto.randomUUID(),
+    Bucket: Bucket.public.bucketName,
+  });
+  const url = await getSignedUrl(new S3Client({}), command);
+
+  return { props: { url } };
+}
+```

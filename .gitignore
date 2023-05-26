@@ -28,7 +28,9 @@ yarn-error.log*
 .env*.local
 
 # vercel
-.vercel
+.next
+.open-next
+.sst
 
 # typescript
 *.tsbuildinfo
