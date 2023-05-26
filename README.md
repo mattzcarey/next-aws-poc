@@ -18,11 +18,11 @@ This app uses SST. SST is a framework built on top of CDK. It has a nice NextJSA
 Update your serverless stack in `sst.config.ts`. Especially the config object. Mine probably wont work for you. Here I use a previously bootstraped by cdk stack. You can remove the cdk object if you don't have a cdk stack already in your account.
 
 ```typescript
-name: "next-sst-poc",
+name: "project-name",
 region: "eu-west-2",
 cdk: {
-qualifier: "hnb659fad",
-fileAssetsBucketName: "cdk-hnb659fad-assets-469147938340-eu-west-2",
+qualifier: "randomQualifier",
+fileAssetsBucketName: "someBucketName",
 }
 ```
 
